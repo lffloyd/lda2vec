@@ -1,5 +1,8 @@
-chainer>=1.5.1
-numpy>=1.10
-spacy>=0.9
-scipy>=0.16.0
+python >= 3.5.2
+chainer>=5.1.0
+numpy>=1.16.0
+spacy>=1.9.0
+scipy>=1.0.0
+pyxDamerauLevenshtein==1.5.2
+pyLDAvis==2.1.2
 sklearn

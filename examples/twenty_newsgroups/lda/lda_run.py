@@ -10,19 +10,21 @@ import time
 from chainer import serializers
 from chainer import cuda
 import chainer.optimizers as O
+import chainer.link as L
 import numpy as np
 
-from lda2vec import prepare_topics, print_top_words_per_topic
-from lda2vec import utils
+# from lda2vec import prepare_topics, print_top_words_per_topic
+# from lda2vec import utils
+from lda2vec import topics, utils
 from lda import LDA
 
 gpu_id = int(os.getenv('CUDA_GPU', 0))
 cuda.get_device(gpu_id).use()
-print "Using GPU " + str(gpu_id)
+print("Using GPU ", str(gpu_id))
 
-vocab = pickle.load(open('vocab.pkl', 'r'))
-corpus = pickle.load(open('corpus.pkl', 'r'))
-bow = np.load("bow.npy").astype('float32')
+vocab = pickle.load(open('../data/vocab.pkl', 'rb'))
+corpus = pickle.load(open('../data/corpus.pkl', 'rb'))
+bow = np.load("../data/bow.npy").astype('float32')
 # Remove bow counts on the first two tokens, which <SKIP> and <EOS>
 bow[:, :2] = 0
 # Normalize bag of words to be a probability
@@ -43,7 +45,7 @@ words = corpus.word_list(vocab)[:n_vocab]
 
 model = LDA(n_docs, n_topics, n_units, n_vocab)
 if os.path.exists('lda.hdf5'):
-    print "Reloading from saved"
+    print("Reloading from saved")
     serializers.load_hdf5("lda.hdf5", model)
 model.to_gpu()
 optimizer = O.Adam()
@@ -56,11 +58,12 @@ for epoch in range(50000000):
         p = cuda.to_cpu(model.proportions.W.data).copy()
         f = cuda.to_cpu(model.factors.W.data).copy()
         w = cuda.to_cpu(model.embedding.W.data).copy()
-        d = prepare_topics(p, f, w, words)
-        print_top_words_per_topic(d)
+        d = topics.prepare_topics(p, f, w, words)
+        topics.print_top_words_per_topic(d)
     for (ids, batch) in utils.chunks(batchsize, np.arange(bow.shape[0]), bow):
         t0 = time.time()
-        optimizer.zero_grads()
+        # optimizer.zero_grads()
+        model.cleargrads()
         rec, ld = model.forward(ids, batch)
         l = rec + ld
         l.backward()
@@ -75,7 +78,7 @@ for epoch in range(50000000):
         rate = batchsize / dt
         logs = dict(rec=float(rec.data), epoch=epoch, j=j,
                     ld=float(ld.data), rate=rate)
-        print msg.format(**logs)
+        print(msg.format(**logs))
         j += 1
     if epoch % 100 == 0:
         serializers.save_hdf5("lda.hdf5", model)

@@ -1,6 +1,8 @@
 lda2vec: Tools for interpreting natural language
 =================================================
 
+**This lda2vec works on python 3.**
+
 .. image:: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
     :target: https://github.com/cemoody/lda2vec/blob/master/LICENSE
 
@@ -95,15 +97,20 @@ Ultimately, the topics are interpreted using the excellent pyLDAvis library:
 Requirements
 ------------
 
-Minimum requirements:
+I tested twenty-newsgroups example based on following requirements:
 
-- Python 2.7+
-- NumPy 1.10+
-- Chainer 1.5.1+
-- spaCy 0.99+
+- Python 3.5.2
+- NumPy 1.16.0
+- Chainer 5.1.0
+- spaCy 1.9.0
+- pyxDamerauLevenshtein 1.5.2
+- pyLDAvis 2.1.2
 
 
 Requirements for some features:
 
 - CUDA support
 - Testing utilities: py.test
+
+
+

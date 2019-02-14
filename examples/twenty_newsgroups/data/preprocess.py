@@ -26,7 +26,7 @@ def clean(line):
 # Preprocess data
 max_length = 10000   # Limit of 10k words per document
 # Convert to unicode (spaCy only works with unicode)
-texts = [unicode(clean(d)) for d in texts]
+texts = [clean(d) for d in texts]
 tokens, vocab = preprocess.tokenize(texts, max_length, merge=False,
                                     n_threads=4)
 corpus = Corpus()
@@ -55,8 +55,8 @@ n_dim = 300
 fn_wordvc = 'GoogleNews-vectors-negative300.bin'
 vectors, s, f = corpus.compact_word_vectors(vocab, filename=fn_wordvc)
 # Save all of the preprocessed files
-pickle.dump(vocab, open('vocab.pkl', 'w'))
-pickle.dump(corpus, open('corpus.pkl', 'w'))
+pickle.dump(vocab, open('vocab.pkl', 'wb'))
+pickle.dump(corpus, open('corpus.pkl', 'wb'))
 np.save("flattened", flattened)
 np.save("doc_ids", doc_ids)
 np.save("pruned", pruned)
