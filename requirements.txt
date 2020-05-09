@@ -1,4 +1,4 @@
-python >= 3.5.2
+python >= 3.6
 chainer>=5.1.0
 numpy>=1.16.0
 spacy>=1.9.0
